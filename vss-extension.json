@@ -31,8 +31,7 @@
     "Visual Studio Extensions"
   ],
   "categories": [
-    "Build and release",
-    "Pipelines"
+    "Azure Pipelines"
   ],
   "screenshots": [{
     "path": "static/images/screenshot-1.png"
