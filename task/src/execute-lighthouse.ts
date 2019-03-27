@@ -78,7 +78,7 @@ export class LighthouseTask {
     args.push("--output=html");
     args.push("--output=json");
     args.push(`--output-path=${path.join(this.workingDirectory, LighthouseTask.BASE_REPORT_NAME)}`);
-    args.push('--chrome-flags="--headless"');
+    args.push('--chrome-flags="--no-sandbox --headless --disable-gpu"');
 
     args.unshift(this.url);
 
