@@ -5,6 +5,7 @@
     "types": [
       "azure-pipelines-task-lib",
       "node"
-    ]
+    ],
+    "sourceMap": true
   }
 }

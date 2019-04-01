@@ -1,6 +1,9 @@
 {
   "private": true,
+  "scripts": {
+    "upload": "tfx build tasks upload --task-path ./src"
+  },
   "dependencies": {
-    "azure-pipelines-task-lib": "^2.7.1"
+    "azure-pipelines-task-lib": "^2.8.0"
   }
 }

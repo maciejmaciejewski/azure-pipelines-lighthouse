@@ -3,9 +3,8 @@ import * as path from "path";
 
 import * as taskLibrary from "azure-pipelines-task-lib/task";
 import { ToolRunner } from "azure-pipelines-task-lib/toolrunner";
-
+const { spawn } = require('child_process');
 import { AuditEvaluator } from "./audit-evaluator";
-
 export class LighthouseTask {
   private static readonly BASE_REPORT_NAME = "lighthouseresult";
 
@@ -44,7 +43,7 @@ export class LighthouseTask {
   }
 
   private defineUrl() {
-    this.url = taskLibrary.getInput("url", true);
+    this.url = `"${taskLibrary.getInput("url", true)}"`
   }
 
   private defineWorkingDirectory() {
@@ -123,15 +122,43 @@ export class LighthouseTask {
     return fs.existsSync(execPath) ? execPath : "";
   }
 
+  private convertBufferToString(buffer: Uint8Array): string {
+    let chunk = Buffer.from(buffer).toString('utf-8')
+    return chunk
+  }
+
+  private async exec() : Promise<void> {
+    return new Promise((resolve, reject) => {
+       // @ts-ignore comment
+      let child = spawn(this.command.toolPath, this.command.args, { shell: true })
+
+      child.stdout.on('data', (data) => {
+        console.log(this.convertBufferToString(data))
+      })
+
+      child.stderr.on('data', (data) => {
+        console.log(this.convertBufferToString(data))
+      })
+
+      child.on('close', (code) => {
+        if (code === 0) {
+          resolve(code);
+        } else {
+          reject(new Error(`Failed to execute Lightouse task. Return code is ${code}`))
+        }
+      })
+    })
+  }
+
   private async executeLighthouse() {
-    const retCode = await this.command.exec();
+    await this.exec()
 
     if (!fs.existsSync(this.jsonReportPath)) {
-      throw new Error(`Lighthouse did not generate a JSON output. Error code: ${retCode}`);
+      throw new Error(`Lighthouse did not generate a JSON output.`);
     }
 
     if (!fs.existsSync(this.htmlReportPath)) {
-      throw new Error(`Lighthouse did not generate a HTML output. Error code: ${retCode}`);
+      throw new Error(`Lighthouse did not generate a HTML output.`);
     }
   }
 
