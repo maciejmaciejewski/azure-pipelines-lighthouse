@@ -122,12 +122,12 @@ export class LighthouseTask {
     return fs.existsSync(execPath) ? execPath : "";
   }
 
-  private convertBufferToString(buffer: Uint8Array): string {
+  private convertBufferToString(buffer: ArrayBuffer): string {
     let chunk = Buffer.from(buffer).toString('utf-8')
     return chunk
   }
 
-  private async exec() : Promise<void> {
+  private async exec() {
     return new Promise((resolve, reject) => {
        // @ts-ignore comment
       let child = spawn(this.command.toolPath, this.command.args, { shell: true })
